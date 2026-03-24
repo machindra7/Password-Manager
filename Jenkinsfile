@@ -15,8 +15,8 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                echo "Installing Node dependencies..."
-                sh 'npm install'
+                echo 'Installing Node dependencies...'
+                sh 'NODE_OPTIONS="--max-old-space-size=4096" npm install --legacy-peer-deps'
             }
         }
 
