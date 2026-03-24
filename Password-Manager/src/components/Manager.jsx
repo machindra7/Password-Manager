@@ -1,119 +1,129 @@
-import React, { useState, useEffect } from "react";
-import { Eye, EyeOff, Lock, User, Link2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
+function Manager({ user }) {
+  const [form, setForm] = useState({
+    website: "",
+    username: "",
+    password: "",
+  });
 
-const Manager = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [form, setForm] = useState({ username: "", url: "", password: "" });
-  const [passwordArray, setPasswordArray] = useState([]);
+  const [data, setData] = useState([]);
+  const [visible, setVisible] = useState({});
 
-  useEffect(() => {
-    const stored = localStorage.getItem("passwords");
-    try {
-      setPasswordArray(stored ? JSON.parse(stored) : []);
-    } catch {
-      setPasswordArray([]);
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // FETCH PASSWORDS
+  const fetchPasswords = async () => {
+    const res = await fetch(
+      "https://jxgdug5t2h.execute-api.us-east-1.amazonaws.com/dev/get-password?userId=" + user.username
+    );
+    const result = await res.json();
+    setData(result);
   };
 
-  const savePassword = (e) => {
-  e.preventDefault();
+  useEffect(() => {
+    if (user?.username) {
+      fetchPasswords();
+    }
+  }, [user]);
 
+  console.log(user);
 
-  if (!form.url.trim() || !form.username.trim() || !form.password.trim()) {
-    toast.dismiss();
-    toast.error("Please fill in all fields!");
-    return;
-  }
+  // SAVE PASSWORD
+  const handleSubmit = async () => {
+    console.log("Saving data:", { userId: user.username, ...form });
 
-  const newEntry = { ...form, id: crypto.randomUUID() };
-  const updatedArray = [...passwordArray, newEntry];
-  setPasswordArray(updatedArray);
-  localStorage.setItem("passwords", JSON.stringify(updatedArray));
-  setForm({ username: "", url: "", password: "" });
+    const res = await fetch("https://jxgdug5t2h.execute-api.us-east-1.amazonaws.com/dev/save-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: user.username, ...form }),
+    });
 
-  toast.dismiss(); 
-  toast.success("Password saved!");
-};
+    const result = await res.json();
+    console.log("Save response:", result);
 
+    setForm({ website: "", username: "", password: "" });
+    fetchPasswords();
+  };
+
+  const toggle = (id) => {
+    setVisible({ ...visible, [id]: !visible[id] });
+  };
 
   return (
-    <form
-      onSubmit={savePassword}
-      className="mt-30 w-full max-w-2xl mx-auto bg-gray-900 p-6 rounded-lg shadow-lg space-y-6"
-    >
-      <h2 className="text-3xl font-bold text-center text-blue-400 flex items-center justify-center gap-2">
-        Add Password 
-      </h2>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
 
-      <div>
-        <label className="text-sm text-gray-300">
-          <Link2 size={16} className="inline mr-1 text-gray-400" />
-          URL
-        </label>
+      {/* FORM */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow">
+        <h2 className="text-lg font-bold mb-4">Add Password</h2>
+
         <input
-          type="text"
-          name="url"
-          value={form.url}
-          onChange={handleChange}
-          placeholder="https://example.com"
-          className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-md mt-1 placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
+          className="w-full p-2 mb-2 rounded bg-gray-100 dark:bg-gray-700"
+          placeholder="Website"
+          value={form.website}
+          onChange={(e) => setForm({ ...form, website: e.target.value })}
         />
+
+        <input
+          className="w-full p-2 mb-2 rounded bg-gray-100 dark:bg-gray-700"
+          placeholder="Username"
+          value={form.username}
+          onChange={(e) => setForm({ ...form, username: e.target.value })}
+        />
+
+        <input
+          className="w-full p-2 mb-2 rounded bg-gray-100 dark:bg-gray-700"
+          placeholder="Password"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+        />
+
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-blue-600 text-white py-2 rounded"
+        >
+          Save Password
+        </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="flex-1">
-          <label className="text-sm text-gray-300">
-            <User size={16} className="inline mr-1 text-gray-400" />
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-            placeholder="your_email@example.com"
-            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-md mt-1 placeholder-gray-400 focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+      {/* LIST */}
+      <div>
+        <h2 className="text-lg font-bold mb-4">Saved Passwords</h2>
 
-        <div className="flex-1 relative">
-          <label className="text-sm text-gray-300">
-            <Lock size={16} className="inline mr-1 text-gray-400" />
-            Password
-          </label>
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-md mt-1 placeholder-gray-400 pr-10 focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-9 text-gray-400 hover:text-blue-400"
+        {data.map((item) => (
+          <div
+            key={item.id}
+            className="bg-white dark:bg-gray-800 p-4 mb-3 rounded-xl shadow hover:scale-[1.02] transition"
           >
-            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-          </button>
-        </div>
-      </div>
+            <p className="font-semibold">{item.website}</p>
+            <p className="text-sm text-gray-500">{item.username}</p>
 
-      <button
-        type="submit"
-        className="w-full bg-transparent border border-blue-600 text-blue-400 font-bold py-3 px-4 rounded-md shadow-lg shadow-blue-500/30 hover:bg-blue-600 hover:text-white hover:shadow-xl hover:shadow-blue-500/50 transition duration-300 ease-in-out"
-      >
-        <Lock size={20} className="inline mr-2" />
-        Add Password
-      </button>
-    </form>
+            <p>
+              {visible[item.id] ? item.password : "********"}
+            </p>
+
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => toggle(item.id)}
+                className="text-blue-500"
+              >
+                Show
+              </button>
+
+              <button
+                onClick={() =>
+                  navigator.clipboard.writeText(item.password)
+                }
+                className="text-green-500"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
-};
+}
 
 export default Manager;

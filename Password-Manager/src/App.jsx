@@ -1,34 +1,36 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ManagerPage from "./pages/ManagerPage";
-import PasswordsPage from "./pages/PasswordsPage";
-import Navbar from "./components/navbar";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Authenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
+import { useState } from "react";
 
-const App = () => {
+import Navbar from "./components/Navbar";
+import Manager from "./components/Manager";
+import Footer from "./components/Footer";
+
+function App() {
+  const [dark, setDark] = useState(false);
+
   return (
-    <Router>
-      <div className="min-h-screen bg-black text-white">
-        <Navbar />
-        <ToastContainer
-          position="bottom-center"
-          autoClose={1500}
-          hideProgressBar={false}
-          limit={1}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          theme="dark"
-        />{" "}
-        <Routes>
-          <Route path="/" element={<ManagerPage />} />
-          <Route path="/passwords" element={<PasswordsPage />} />
-        </Routes>
-      </div>
-    </Router>
+    <Authenticator>
+      {({ signOut, user }) => (
+        <div className={dark ? "dark" : ""}>
+          <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-black dark:text-white">
+
+            <Navbar
+              toggleDark={() => setDark(!dark)}
+              signOut={signOut}
+              user={user}
+            />
+
+            <div className="flex-grow">
+              <Manager user={user} />
+            </div>
+
+            <Footer />
+          </div>
+        </div>
+      )}
+    </Authenticator>
   );
-};
+}
 
 export default App;
