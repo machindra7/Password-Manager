@@ -17,7 +17,6 @@ Amplify.configure({
   }
 });
 
-Amplify.configure(awsConfig);
 
 console.log("ENV:", import.meta.env);
 
