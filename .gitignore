@@ -23,6 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-./src/aws-config.js
+
 
 .env
