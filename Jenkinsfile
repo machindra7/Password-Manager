@@ -53,7 +53,7 @@ pipeline {
                 sh """
                     # docker stop password-manager || true
                     # docker rm password-manager || true
-                    docker run -d -p 8080:80 --name password-manager ${DOCKER_IMAGE}
+                    docker run -d -p 8080:80 --name password-manager machindra7/password-manager:latest
                 """
             }
         }
