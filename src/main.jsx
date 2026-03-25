@@ -5,11 +5,16 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css' 
 
+import { Amplify } from 'aws-amplify';
+
 const awsConfig = {
-  region: import.meta.env.VITE_AWS_REGION,
-  userPoolId: import.meta.env.VITE_USER_POOL_ID,
-  userPoolWebClientId: import.meta.env.VITE_CLIENT_ID
+  Auth: {
+    region: "us-east-1",
+    userPoolId: "us-east-1_cs9G6OSca",
+    userPoolWebClientId: "3iqlm8kfho6j3afl04fa2i8fu4"
+  }
 };
+
 Amplify.configure(awsConfig);
 
 console.log("ENV:", import.meta.env);
