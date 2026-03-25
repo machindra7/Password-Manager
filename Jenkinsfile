@@ -51,8 +51,8 @@ pipeline {
             steps {
                 echo "Deploying Docker container locally..."
                 sh """
-                    # docker stop password-manager || true
-                    # docker rm password-manager || true
+                    docker stop password-manager || true
+                    docker rm password-manager || true
                     docker run -d -p 8081:80 --name password-manager machindra7/password-manager:latest
                 """
             }
