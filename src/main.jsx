@@ -7,13 +7,15 @@ import './index.css'
 
 import { Amplify } from 'aws-amplify';
 
-const awsConfig = {
+Amplify.configure({
   Auth: {
-    region: "us-east-1",
-    userPoolId: "us-east-1_cs9G6OSca",
-    userPoolWebClientId: "3iqlm8kfho6j3afl04fa2i8fu4"
+    Cognito: {
+      region: "us-east-1",
+      userPoolId: "us-east-1_cs9G6OSca",
+      userPoolClientId: "3iqlm8kfho6j3afl04fa2i8fu4"
+    }
   }
-};
+});
 
 Amplify.configure(awsConfig);
 
