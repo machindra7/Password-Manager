@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "machindra7/password-manager:latest"
+        VITE_AWS_REGION = 'us-east-1'
+        VITE_USER_POOL_ID = 'us-east-1_cs9G6OSca'
+        VITE_CLIENT_ID = '3iqlm8kfho6j3afl04fa2i8fu4'
     }
 
     stages {
