@@ -48,8 +48,8 @@ pipeline {
             steps {
                 echo "Deploying Docker container locally..."
                 sh """
-                    docker stop password-manager || true
-                    docker rm password-manager || true
+                    // docker stop password-manager || true
+                    // docker rm password-manager || true
                     docker run -d -p 8080:80 --name password-manager ${DOCKER_IMAGE}
                 """
             }
