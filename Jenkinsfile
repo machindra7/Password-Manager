@@ -30,12 +30,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
-                sh """
-                    docker stop password-manager || true
-                    docker rm password-manager || true
-                    docker rmi -f $(docker images -q) || true
-                    docker build -t ${DOCKER_IMAGE} .
-                """
+                sh"docker stop password-manager || true"
+                sh"docker rm password-manager || true"
+                sh"docker rmi -f $(docker images -q) || true"
+                sh"docker build -t ${DOCKER_IMAGE} ."
+                
             }
         }
 
