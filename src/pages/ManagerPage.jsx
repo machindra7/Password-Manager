@@ -8,7 +8,7 @@ const ManagerPage = () => {
       <Manager />
       <div className="text-center mt-6">
         <Link to="/passwords" className="text-blue-400 hover:text-blue-500 underline">
-          🔒 Saved Passwords
+          🔒 Saved Secure Passwords
         </Link>
       </div>
     </div>
