@@ -30,6 +30,11 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo "Building Docker image..."
+                sh """
+                    docker stop password-manager || true
+                    docker rm password-manager || true
+                    docker rmi -f $(docker images -q) || true
+                """
                 sh "docker build -t ${DOCKER_IMAGE} ."
             }
         }
@@ -48,8 +53,6 @@ pipeline {
             steps {
                 echo "Deploying Docker container locally..."
                 sh """
-                    docker stop password-manager || true
-                    docker rm password-manager || true
                     docker run -d -p 8081:80 -v ./public:/app/public -v ./src:/app/src --name password-manager machindra7/password-manager:latest
                 """
             }
