@@ -32,7 +32,7 @@ pipeline {
                 echo "Building Docker image..."
                 sh"docker stop password-manager || true"
                 sh"docker rm password-manager || true"
-                sh 'docker rmi -f $(docker images -q) || true'
+                sh "docker rmi -f ${DOCKER_IMAGE} || true"
                 sh"docker build -t ${DOCKER_IMAGE} ."
                 
             }
